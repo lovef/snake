@@ -12,7 +12,11 @@
         var squareSize = { x: size.x / columns, y: size.y / rows }
 
         var position = { x: 10, y: 10};
+        var tailLast = position;
         var velocity = { x: 0, y: 0 };
+        var points = [];
+        var apple = undefined;
+        var appleInt = undefined;
 
         function fill(p) {
             context.fillRect(p.x * squareSize.x, p.y * squareSize.y, squareSize.x, squareSize.y);
@@ -23,13 +27,48 @@
             context.clearRect(p.x * squareSize.x, p.y * squareSize.y, squareSize.x, squareSize.y);
         }
 
+        function createApple() {
+            apple = { x: Math.floor(Math.random() * columns), y: Math.floor(Math.random() * rows) };
+            appleInt = pointToInt(apple);
+            if (collides(appleInt)){
+                console.log("Apple collides, ignore");
+                apple = undefined;
+            } else {
+                fill(apple);
+            }
+        }
+
         function game() {
-            clear(position);
+            if(!apple) {
+                createApple();
+            }
             position.x += velocity.x + columns;
             position.y += velocity.y + rows;
             position.x %= columns;
             position.y %= rows;
             fill(position);
+            var positionInt = pointToInt(position);
+            points.push(positionInt);
+            if (positionInt == appleInt) {
+                apple = undefined;
+            } else {
+                var tailPointInt = points.shift();
+                if (tailPointInt != pointToInt(tailLast)) {
+                    clear(tailLast);
+                    tailLast = intToPoint(tailPointInt);
+                }
+            }
+        }
+
+        function collides(pInt) {
+            return points.indexOf(pInt) >= 0;
+        }
+        function pointToInt(p) {
+            return p.x + p.y * columns;
+        }
+        function intToPoint(i) {
+            var x = i % columns;
+            return { x: x, y: (i - x) / columns };
         }
 
         document.addEventListener('keydown', function(e) {
