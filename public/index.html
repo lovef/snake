@@ -11,7 +11,8 @@
         var rows = 20;
         var squareSize = { x: size.x / columns, y: size.y / rows }
 
-        var position = { x: 10, y: 10}
+        var position = { x: 10, y: 10};
+        var velocity = { x: 0, y: 0 };
 
         function fill(p) {
             context.fillRect(p.x * squareSize.x, p.y * squareSize.y, squareSize.x, squareSize.y);
@@ -24,17 +25,19 @@
 
         function game() {
             clear(position);
-            position.x += 1;
+            position.x += velocity.x + columns;
+            position.y += velocity.y + rows;
             position.x %= columns;
+            position.y %= rows;
             fill(position);
         }
 
         document.addEventListener('keydown', function(e) {
             switch(e.code) {
-                case 'ArrowLeft': console.log('left'); break;
-                case 'ArrowRight': console.log('right'); break;
-                case 'ArrowUp': console.log('up'); break;
-                case 'ArrowDown': console.log('down'); break;
+                case 'ArrowLeft': if(velocity.x == 0) { velocity.x = -1; velocity.y = 0; } break;
+                case 'ArrowRight': if(velocity.x == 0) { velocity.x = 1; velocity.y = 0; } break;
+                case 'ArrowUp': if(velocity.y == 0) { velocity.x = 0; velocity.y = -1; } break;
+                case 'ArrowDown': if(velocity.y == 0) { velocity.x = 0; velocity.y = 1; } break;
             }
         })
 
