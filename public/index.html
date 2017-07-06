@@ -13,10 +13,22 @@
 
         var position = { x: 10, y: 10}
 
-        function draw(p) {
+        function fill(p) {
             context.fillRect(p.x * squareSize.x, p.y * squareSize.y, squareSize.x, squareSize.y);
         }
+        var position = { x: 10, y: 10}
 
-        draw(position);
+        function clear(p) {
+            context.clearRect(p.x * squareSize.x, p.y * squareSize.y, squareSize.x, squareSize.y);
+        }
+
+        function game() {
+            clear(position);
+            position.x += 1;
+            position.x %= columns;
+            fill(position);
+        }
+
+        window.setInterval(game, 100);
     </script>
 </body>
