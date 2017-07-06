@@ -3,10 +3,12 @@
     <title>Simple Snake</title>
 </header>
 <body>
-    <canvas id="canvas" width="100" height="100">Canvas is required for this to work</canvas>
+    <label id="score"></label>
+    <canvas id="canvas" width="400" height="400">Canvas is required for this to work</canvas>
     <script>
+        var scoreBoard = document.getElementById('score');
         var context = document.getElementById('canvas').getContext('2d');
-        var size = { x: 100, y: 100 }
+        var size = { x: 400, y: 400 }
         var columns = 20;
         var rows = 20;
         var squareSize = { x: size.x / columns, y: size.y / rows }
@@ -46,8 +48,14 @@
             position.y += velocity.y + rows;
             position.x %= columns;
             position.y %= rows;
-            fill(position);
             var positionInt = pointToInt(position);
+            if(collides(positionInt)) {
+                window.clearInterval(intervalId);
+                context.fillStyle = '#ff0000';
+                fill(position);
+                return;
+            }
+            fill(position);
             points.push(positionInt);
             if (positionInt == appleInt) {
                 apple = undefined;
@@ -58,6 +66,7 @@
                     tailLast = intToPoint(tailPointInt);
                 }
             }
+            scoreBoard.textContent = points.length;
         }
 
         function collides(pInt) {
@@ -80,6 +89,6 @@
             }
         })
 
-        window.setInterval(game, 100);
+        var intervalId = window.setInterval(game, 100);
     </script>
 </body>
