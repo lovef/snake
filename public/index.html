@@ -29,6 +29,7 @@
         var position = { x: 10, y: 10};
         var tailLast = position;
         var velocity = { x: 0, y: 0 };
+        var velocityNext = undefined;
         var points = [];
         var apple = undefined;
         var appleInt = undefined;
@@ -54,7 +55,11 @@
             }
         }
 
-        function game() {
+        function gameLoop() {
+            if(velocityNext) {
+                velocity = velocityNext;
+                velocityNext = undefined;
+            }
             position.x += velocity.x + columns;
             position.y += velocity.y + rows;
             position.x %= columns;
@@ -97,10 +102,10 @@
 
         document.addEventListener('keydown', function(e) {
             switch(e.code) {
-                case 'ArrowLeft': if(velocity.x == 0) { velocity.x = -1; velocity.y = 0; } break;
-                case 'ArrowRight': if(velocity.x == 0) { velocity.x = 1; velocity.y = 0; } break;
-                case 'ArrowUp': if(velocity.y == 0) { velocity.x = 0; velocity.y = -1; } break;
-                case 'ArrowDown': if(velocity.y == 0) { velocity.x = 0; velocity.y = 1; } break;
+                case 'ArrowLeft': if(velocity.x == 0) velocityNext = { x: -1, y: 0 }; break;
+                case 'ArrowRight': if(velocity.x == 0) velocityNext = { x: 1, y: 0 }; break;
+                case 'ArrowUp': if(velocity.y == 0) velocityNext = { x: 0, y: -1 }; break;
+                case 'ArrowDown': if(velocity.y == 0) velocityNext = { x: 0, y: 1 }; break;
             }
         })
 
@@ -120,6 +125,6 @@
             context.canvas.height = size;
         })
 
-        var intervalId = window.setInterval(game, 100);
+        var intervalId = window.setInterval(gameLoop, 100);
     </script>
 </body>
