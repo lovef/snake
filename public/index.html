@@ -26,8 +26,8 @@
         var rows = 20;
         var squareSize = { x: size.x / columns, y: size.y / rows }
 
-        var position = { x: 10, y: 10};
-        var tailLast = position;
+        var position = { x: 10, y: 10 };
+        var tailLast = { x: 10, y: 10 };
         var velocity = { x: 0, y: 0 };
         var velocityNext = undefined;
         var points = [];
@@ -35,20 +35,25 @@
         var appleInt = undefined;
 
         function fill(p) {
-            context.fillRect(Math.ceil(p.x * squareSize.x) +1, Math.ceil(p.y * squareSize.y +1),
-             Math.floor(squareSize.x) -2, Math.floor(squareSize.y) -2);
+            var x = Math.round(p.x * squareSize.x);
+            var y = Math.round(p.y * squareSize.y);
+            var x1 = Math.round((p.x + 1) * squareSize.x);
+            var y1 = Math.round((p.y + 1) * squareSize.y);
+            context.fillRect(x, y, x1 - x, y1 - y);
         }
-        var position = { x: 10, y: 10}
 
         function clear(p) {
-            context.clearRect(p.x * squareSize.x, p.y * squareSize.y, squareSize.x, squareSize.y);
+            var x = Math.round(p.x * squareSize.x);
+            var y = Math.round(p.y * squareSize.y);
+            var x1 = Math.round((p.x + 1) * squareSize.x);
+            var y1 = Math.round((p.y + 1) * squareSize.y);
+            context.clearRect(x, y, x1 - x, y1 - y);
         }
 
         function createApple() {
             apple = { x: Math.floor(Math.random() * columns), y: Math.floor(Math.random() * rows) };
             appleInt = pointToInt(apple);
             if (collides(appleInt)){
-                console.log("Apple collides, ignore");
                 apple = undefined;
             } else {
                 fill(apple);
