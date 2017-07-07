@@ -1,10 +1,15 @@
 <html>
 <header>
     <title>Simple Snake</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
 </header>
 <body>
-    <label id="score"></label>
     <canvas id="canvas" width="400" height="400">Canvas is required for this to work</canvas>
+    <label id="score"></label>
     <script>
         var scoreBoard = document.getElementById('score');
         var context = document.getElementById('canvas').getContext('2d');
