@@ -33,6 +33,8 @@
         var points = [];
         var apple = undefined;
         var appleInt = undefined;
+        var nutrients = 1;
+        var toAdd = 0;
 
         function fill(p) {
             var x = Math.round(p.x * squareSize.x);
@@ -79,6 +81,10 @@
             points.push(positionInt);
             if (positionInt == appleInt) {
                 apple = undefined;
+                toAdd += nutrients - 1;
+                nutrients++;
+            } else if(toAdd > 0) {
+                toAdd--;
             } else {
                 var tailPointInt = points.shift();
                 if (tailPointInt != pointToInt(tailLast)) {
