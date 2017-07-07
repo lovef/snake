@@ -2,18 +2,26 @@
 <header>
     <title>Simple Snake</title>
     <style>
+        html, body {
+            padding: 0; margin: 0;
+            overflow:hidden;
+        }
         canvas {
             border: 1px solid #000;
         }
     </style>
 </header>
 <body>
-    <canvas id="canvas" width="400" height="400">Canvas is required for this to work</canvas>
+    <canvas id="canvas">Canvas is required for this to work</canvas>
     <label id="score"></label>
     <script>
         var scoreBoard = document.getElementById('score');
-        var context = document.getElementById('canvas').getContext('2d');
-        var size = { x: 400, y: 400 }
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+        var s = Math.min(window.innerWidth, window.innerHeight) - 2;
+        var size = { x: s, y: s }
+        context.canvas.width = size.x;
+        context.canvas.height = size.y;
         var columns = 20;
         var rows = 20;
         var squareSize = { x: size.x / columns, y: size.y / rows }
@@ -26,7 +34,8 @@
         var appleInt = undefined;
 
         function fill(p) {
-            context.fillRect(p.x * squareSize.x, p.y * squareSize.y, squareSize.x, squareSize.y);
+            context.fillRect(Math.ceil(p.x * squareSize.x) +1, Math.ceil(p.y * squareSize.y +1),
+             Math.floor(squareSize.x) -2, Math.floor(squareSize.y) -2);
         }
         var position = { x: 10, y: 10}
 
@@ -46,9 +55,6 @@
         }
 
         function game() {
-            if(!apple) {
-                createApple();
-            }
             position.x += velocity.x + columns;
             position.y += velocity.y + rows;
             position.x %= columns;
@@ -60,7 +66,6 @@
                 fill(position);
                 return;
             }
-            fill(position);
             points.push(positionInt);
             if (positionInt == appleInt) {
                 apple = undefined;
@@ -70,6 +75,11 @@
                     clear(tailLast);
                     tailLast = intToPoint(tailPointInt);
                 }
+            }
+            // Draw last to ensure boxes aren't cleared
+            fill(position);
+            if(!apple) {
+                createApple();
             }
             scoreBoard.textContent = points.length;
         }
@@ -92,6 +102,22 @@
                 case 'ArrowUp': if(velocity.y == 0) { velocity.x = 0; velocity.y = -1; } break;
                 case 'ArrowDown': if(velocity.y == 0) { velocity.x = 0; velocity.y = 1; } break;
             }
+        })
+
+        canvas.onmousedown = function(e){
+            if(velocity.x == 0) {
+                var left = e.x / size.x < 0.5;
+                velocity.x = left ? -1 : 1; velocity.y = 0;
+            } else if(velocity.y == 0) {
+                var down = e.y / size.y < 0.5;
+                velocity.x = 0; velocity.y = down ? -1 : 1;
+            }
+        }
+
+        window.addEventListener('resize', function(e) {
+            var size = Math.min(window.innerWidth, window.innerHeight) - 2;
+            context.canvas.width = size;
+            context.canvas.height = size;
         })
 
         var intervalId = window.setInterval(game, 100);
