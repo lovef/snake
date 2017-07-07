@@ -15,19 +15,18 @@
     <canvas id="canvas">Canvas is required for this to work</canvas>
     <label id="score"></label>
     <script>
+        var pixels = Math.min(window.innerWidth, window.innerHeight) - 2;
         var scoreBoard = document.getElementById('score');
         var canvas = document.getElementById('canvas');
         var context = canvas.getContext('2d');
-        var s = Math.min(window.innerWidth, window.innerHeight) - 2;
-        var size = { x: s, y: s }
-        context.canvas.width = size.x;
-        context.canvas.height = size.y;
-        var columns = 20;
-        var rows = 20;
-        var squareSize = { x: size.x / columns, y: size.y / rows }
+        context.canvas.width = pixels;
+        context.canvas.height = pixels;
 
-        var position = { x: 10, y: 10 };
-        var tailLast = { x: 10, y: 10 };
+        var size = 30;
+        var boxSize = pixels / size;
+
+        var position = { x: size / 2, y: size / 2 };
+        var tailLast = { x: size / 2, y: size / 2 };
         var velocity = { x: 0, y: 0 };
         var velocityNext = undefined;
         var points = [];
@@ -37,23 +36,23 @@
         var toAdd = 0;
 
         function fill(p) {
-            var x = Math.round(p.x * squareSize.x);
-            var y = Math.round(p.y * squareSize.y);
-            var x1 = Math.round((p.x + 1) * squareSize.x);
-            var y1 = Math.round((p.y + 1) * squareSize.y);
+            var x = Math.round(p.x * boxSize);
+            var y = Math.round(p.y * boxSize);
+            var x1 = Math.round((p.x + 1) * boxSize);
+            var y1 = Math.round((p.y + 1) * boxSize);
             context.fillRect(x, y, x1 - x, y1 - y);
         }
 
         function clear(p) {
-            var x = Math.round(p.x * squareSize.x);
-            var y = Math.round(p.y * squareSize.y);
-            var x1 = Math.round((p.x + 1) * squareSize.x);
-            var y1 = Math.round((p.y + 1) * squareSize.y);
+            var x = Math.round(p.x * boxSize);
+            var y = Math.round(p.y * boxSize);
+            var x1 = Math.round((p.x + 1) * boxSize);
+            var y1 = Math.round((p.y + 1) * boxSize);
             context.clearRect(x, y, x1 - x, y1 - y);
         }
 
         function createApple() {
-            apple = { x: Math.floor(Math.random() * columns), y: Math.floor(Math.random() * rows) };
+            apple = { x: Math.floor(Math.random() * size), y: Math.floor(Math.random() * size) };
             appleInt = pointToInt(apple);
             if (collides(appleInt)){
                 apple = undefined;
@@ -67,15 +66,11 @@
                 velocity = velocityNext;
                 velocityNext = undefined;
             }
-            position.x += velocity.x + columns;
-            position.y += velocity.y + rows;
-            position.x %= columns;
-            position.y %= rows;
+            position.x = (position.x + velocity.x + size) % size;
+            position.y = (position.y + velocity.y + size) % size;
             var positionInt = pointToInt(position);
             if(collides(positionInt)) {
-                window.clearInterval(intervalId);
-                context.fillStyle = '#ff0000';
-                fill(position);
+                gameOver();
                 return;
             }
             points.push(positionInt);
@@ -100,15 +95,21 @@
             scoreBoard.textContent = points.length;
         }
 
+        function gameOver() {
+                window.clearInterval(intervalId);
+                context.fillStyle = '#ff0000';
+                fill(position);
+        }
+
         function collides(pInt) {
             return points.indexOf(pInt) >= 0;
         }
         function pointToInt(p) {
-            return p.x + p.y * columns;
+            return p.x + p.y * size;
         }
         function intToPoint(i) {
-            var x = i % columns;
-            return { x: x, y: (i - x) / columns };
+            var x = i % size;
+            return { x: x, y: (i - x) / size };
         }
 
         document.addEventListener('keydown', function(e) {
@@ -122,10 +123,10 @@
 
         canvas.onmousedown = function(e){
             if(velocity.x == 0) {
-                var left = e.x / size.x < 0.5;
+                var left = e.x / pixels < 0.5;
                 velocity.x = left ? -1 : 1; velocity.y = 0;
             } else if(velocity.y == 0) {
-                var down = e.y / size.y < 0.5;
+                var down = e.y / pixels < 0.5;
                 velocity.x = 0; velocity.y = down ? -1 : 1;
             }
         }
