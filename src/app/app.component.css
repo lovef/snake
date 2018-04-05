@@ -1,4 +1,20 @@
+.body {
+    height: 100vh;
+    width: 100vw;
+}
+
+.header {
+    height: 56px;
+}
+
 .icon {
-  margin-right: 10px;
-  height: 36px;
+    margin-right: 10px;
+    height: 36px;
+}
+
+.content {
+    position: absolute;
+    top: 56px;
+    bottom: 0;
+    width: 100vw;
 }
