@@ -15,8 +15,10 @@ export class Snake {
     }
 
     updateVelocity(velocity: Point) {
-        if (velocity.x === 0 && this.velocity.y === 0 || velocity.y === 0 && this.velocity.x === 0) {
-            this.velocity = velocity
+        if (velocity.x !== 0 && (this.velocity.y !== 0 || this.velocity.x === 0)) {
+            this.velocity = new Point(velocity.x, 0)
+        } else if (velocity.y !== 0 && (this.velocity.x !== 0 || this.velocity.y === 0)) {
+            this.velocity = new Point(0, velocity.y)
         }
     }
 

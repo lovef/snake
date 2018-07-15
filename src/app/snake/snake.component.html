@@ -1,4 +1,4 @@
 <div #body>
     <label #score>{{ getScore() }}</label>
-    <canvas #canvas>Canvas is required for this to work</canvas>
+    <canvas #canvas (touchstart)="onTouchstart($event)">Canvas is required for this to work</canvas>
 </div>
