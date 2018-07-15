@@ -61,6 +61,19 @@ export class SnakeComponent implements OnInit, Drawer {
         }
     }
 
+    onTouchstart(event: TouchEvent) {
+        event.preventDefault()
+        const touch = event.touches[0]
+        if (!touch) {
+            return
+        }
+        const bounds = this.ctx.canvas.getBoundingClientRect()
+        const x = Math.floor((touch.pageX - bounds.left) * 3 / bounds.width) - 1
+        const y = Math.floor((touch.pageY - bounds.top) * 3 / bounds.height) - 1
+        this.snake.updateVelocity(new Point(x, y))
+        this.start()
+    }
+
     start() {
         if (!this.started) {
             this.started = true

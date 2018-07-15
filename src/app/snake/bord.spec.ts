@@ -3,7 +3,9 @@ import { Point } from './point'
 import { Snake } from './snake'
 
 class BoardTester {
-    constructor(readonly board: Board, readonly snake: Snake) { }
+    constructor(readonly board: Board, readonly snake: Snake) {
+        board.apple = new Apple(Point.Xminus, 0) // Ensure apple is not eaten
+    }
 
     givenVelocity(velocity: Point): BoardTester {
         this.snake.updateVelocity(velocity)
@@ -36,8 +38,28 @@ class BoardTester {
             this.board.update()
             actualVelocities.push(this.snake.velocity)
         })
-        expect(actualVelocities).toEqual(expectedVelocities)
+        this.shouldEqual(actualVelocities, expectedVelocities)
         return this
+    }
+
+    shouldEqual(actual: Point[], expected: Point[]) {
+        let failed = ''
+        if (actual.length !== expected.length) {
+            failed += '\nlengths differ: ' + actual.length + ' != ' + expected.length
+        }
+        for (let i = 0; i < Math.max(actual.length, expected.length); i++) {
+            const a = expected[i]
+            const b = actual[i]
+            if (a && !b || !a && b || a && !a.equals(b)) {
+                failed += '\n' + i + ': ' + b + ' != ' + a
+            }
+        }
+        if (failed) {
+            fail('Arrays differ\n' +
+                'Expected: ' + expected + '\n' +
+                'Actual:   ' + actual +
+                failed)
+        }
     }
 }
 
@@ -105,6 +127,20 @@ describe('Board', () => {
             .velocityShouldBe(Point.X, Point.X)
             .givenVelocity(Point.Y)
             .velocityShouldBe(Point.Y, Point.Y)
+            .givenVelocity(Point.Yminus)
+            .velocityShouldBe(Point.Y, Point.Y)
+    })
+
+    it('can update velocity with a diagonal vector', () => {
+        const snake = board.addSnake()
+        new BoardTester(board, snake)
+            .givenVelocity(Point.X)
+            .velocityShouldBe(Point.X)
+            .givenVelocity(Point.X)
+            .givenVelocity(new Point(1, 1))
+            .velocityShouldBe(Point.Y)
+            .givenVelocity(new Point(1, 1))
+            .velocityShouldBe(Point.X)
     })
 
     it('can render the entire frame', () => {
