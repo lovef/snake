@@ -18,3 +18,12 @@
     bottom: 0;
     width: 100vw;
 }
+
+.signature {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 18px;
+    width: 42px;
+    height: 42px;
+}
