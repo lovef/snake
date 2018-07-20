@@ -1,5 +1,6 @@
-div {
+.content {
     box-sizing: border-box;
+    position: relative;
     width: 100vw;
     height: 100vw;
     margin: 0 auto;
@@ -11,12 +12,39 @@ div {
 canvas {
     width: 100%;
     height: 100%;
+    cursor: none;
 }
 
-label {
+.score {
     position: absolute;
     z-index: 2;
     cursor: pointer;
-    color: #FFF;
+    color: white;
     margin: 10px;
+}
+
+.menu {
+    z-index: 3;
+    background-color: rgba(0,0,0,0.5);
+    position: absolute;
+    display: table;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.menuContent {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px;
+    color: white;
+}
+
+button {
+    border: 2px solid #aaa;
+    padding: 10px;
+    color: white;
+    background-color: black;
 }
