@@ -40,10 +40,14 @@ export class SnakeComponent implements OnInit, Drawer {
     @HostListener('window:keydown', ['$event'])
     keyDown(event) {
         let velocity: Point
-        switch (event.code) {
+        switch (event.key) {
+            case 'a':
             case 'ArrowLeft': velocity = Point.Xminus; break
+            case 'd':
             case 'ArrowRight': velocity = Point.X; break
+            case 'w':
             case 'ArrowUp': velocity = Point.Yminus; break
+            case 's':
             case 'ArrowDown': velocity = Point.Y; break
         }
         this.updateVelocity(velocity)
