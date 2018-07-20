@@ -12,6 +12,7 @@ export class SnakeComponent implements OnInit, Drawer {
 
     @ViewChild('body') body: ElementRef
     @ViewChild('canvas') canvas: ElementRef
+    showMenu = true
 
     ctx: CanvasRenderingContext2D
 
@@ -26,24 +27,14 @@ export class SnakeComponent implements OnInit, Drawer {
 
     getScore(): number { return this.board.score }
 
+    isGameOver(): boolean { return this.board.gameOver }
+
     ngOnInit() {
         this.ctx = this.canvas.nativeElement.getContext('2d')
-        this.board = new Board(this.pixels, this.pixels, this)
-        this.snake = this.board.addSnake()
+        this.setupBoard()
 
-        this.onResize()
+        this.refresh()
         this.fill(this.snake.nose)
-    }
-
-    @HostListener('window:resize', ['$event'])
-    onResize() {
-        this.size = this.ctx.canvas.offsetWidth
-        this.pixelSize = this.ctx.canvas.offsetWidth / this.pixels
-        this.ctx.canvas.width = this.size
-        this.ctx.canvas.height = this.size
-
-        this.ctx.fillStyle = '#AAA'
-        this.board.render()
     }
 
     @HostListener('window:keydown', ['$event'])
@@ -55,14 +46,10 @@ export class SnakeComponent implements OnInit, Drawer {
             case 'ArrowUp': velocity = Point.Yminus; break
             case 'ArrowDown': velocity = Point.Y; break
         }
-        if (velocity) {
-            this.snake.updateVelocity(velocity)
-            this.start()
-        }
+        this.updateVelocity(velocity)
     }
 
     onTouchstart(event: TouchEvent) {
-        event.preventDefault()
         const touch = event.touches[0]
         if (!touch) {
             return
@@ -70,21 +57,55 @@ export class SnakeComponent implements OnInit, Drawer {
         const bounds = this.ctx.canvas.getBoundingClientRect()
         const x = Math.floor((touch.pageX - bounds.left) * 3 / bounds.width) - 1
         const y = Math.floor((touch.pageY - bounds.top) * 3 / bounds.height) - 1
-        this.snake.updateVelocity(new Point(x, y))
-        this.start()
+        this.updateVelocity(new Point(x, y))
+        if (!this.isGameOver()) {
+            event.preventDefault()
+        }
+    }
+
+    updateVelocity(velocity: Point) {
+        if (velocity && !this.board.gameOver) {
+            this.snake.updateVelocity(velocity)
+            this.start()
+        }
+    }
+
+    newGame() {
+        this.setupBoard()
+        this.refresh()
+        this.showMenu = false
+    }
+
+    @HostListener('window:resize', ['$event'])
+    refresh() {
+        this.size = this.ctx.canvas.offsetWidth
+        this.pixelSize = this.ctx.canvas.offsetWidth / this.pixels
+        this.ctx.canvas.width = this.size
+        this.ctx.canvas.height = this.size
+
+        this.ctx.fillStyle = '#AAA'
+        this.board.render()
     }
 
     start() {
         if (!this.started) {
             this.started = true
+            this.showMenu = false
             this.interval = window.setInterval(() => { this.gameLoop() }, 100)
         }
+    }
+
+    setupBoard() {
+        this.board = new Board(this.pixels, this.pixels, this)
+        this.snake = this.board.addSnake()
     }
 
     gameLoop() {
         this.board.update()
         if (this.board.gameOver) {
             window.clearInterval(this.interval)
+            this.started = false
+            this.showMenu = true
         }
     }
 

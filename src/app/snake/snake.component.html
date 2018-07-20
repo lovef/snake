@@ -1,4 +1,20 @@
-<div #body>
-    <label #score>{{ getScore() }}</label>
+<div class="content">
+    <label #score class="score">{{ getScore() }}</label>
     <canvas #canvas (touchstart)="onTouchstart($event)">Canvas is required for this to work</canvas>
+    <div #menu class="menu" *ngIf="showMenu" (touchstart)="onTouchstart($event)">
+        <div class="menuContent">
+            <div *ngIf="!isGameOver()">
+                <h1>Snake</h1>
+                Press any arrow key
+                <p>or</p>
+                Touch the game board
+            </div>
+            <div *ngIf="isGameOver()">
+                <h1>Game Over</h1>
+                <p>Final score: {{ getScore() }}</p>
+
+                <button (click)="newGame()">New Game</button>
+            </div>
+        </div>
+    </div>
 </div>
