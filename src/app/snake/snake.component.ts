@@ -10,7 +10,6 @@ import { Snake } from './snake'
 })
 export class SnakeComponent implements OnInit, Drawer {
 
-    @ViewChild('body') body: ElementRef
     @ViewChild('canvas') canvas: ElementRef
     showMenu = true
 
@@ -25,9 +24,18 @@ export class SnakeComponent implements OnInit, Drawer {
     started = false
     interval
 
+    constructor(readonly root: ElementRef) { }
+
     getScore(): number { return this.board.score }
 
     isGameOver(): boolean { return this.board.gameOver }
+
+    isFullScreen(): boolean {
+        return document.fullscreenElement ||
+            (document as any).mozFullScreenElement ||
+            document.webkitFullscreenElement ||
+            (document as any).msFullscreenElement
+    }
 
     ngOnInit() {
         this.ctx = this.canvas.nativeElement.getContext('2d')
@@ -50,12 +58,15 @@ export class SnakeComponent implements OnInit, Drawer {
             case 's':
             case 'ArrowDown': velocity = Point.Y; break
         }
-        this.updateVelocity(velocity)
+        const handled = this.updateVelocity(velocity)
+        if (handled) {
+            event.preventDefault()
+        }
     }
 
     onTouchstart(event: TouchEvent) {
         const touch = event.touches[0]
-        if (!touch) {
+        if ((event.target as any).nodeName === 'BUTTON' || !touch) {
             return
         }
         const bounds = this.ctx.canvas.getBoundingClientRect()
@@ -71,7 +82,9 @@ export class SnakeComponent implements OnInit, Drawer {
         if (velocity && !this.board.gameOver) {
             this.snake.updateVelocity(velocity)
             this.start()
+            return true
         }
+        return false
     }
 
     newGame() {
@@ -128,5 +141,39 @@ export class SnakeComponent implements OnInit, Drawer {
         const x1 = Math.round((p.x + 1) * this.pixelSize)
         const y1 = Math.round((p.y + 1) * this.pixelSize)
         this.ctx.clearRect(x, y, x1 - x, y1 - y)
+    }
+
+    toggleFullScreen() {
+        const element = this.root.nativeElement
+        if (!this.isFullScreen()) {
+            this.requestFullScreen(element)
+        } else {
+            this.exitFullScreen(element)
+        }
+    }
+
+    requestFullScreen(element) {
+        // https://stackoverflow.com/a/7525760/1020871
+        // Supports most browsers and their versions.
+        const requestMethod = element.requestFullScreen ||
+            element.webkitRequestFullScreen ||
+            element.mozRequestFullScreen ||
+            element.msRequestFullScreen
+
+        if (requestMethod) {
+            requestMethod.call(element)
+        } else {
+            alert('Full screen is not supported')
+        }
+    }
+
+    exitFullScreen(element) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen()
+        } else if ((document as any).mozCancelFullScreen) {
+            (document as any).mozCancelFullScreen()
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen()
+        }
     }
 }
