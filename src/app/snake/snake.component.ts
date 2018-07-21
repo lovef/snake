@@ -6,7 +6,7 @@ import { Snake } from './snake'
 @Component({
     selector: 'app-snake',
     templateUrl: './snake.component.html',
-    styleUrls: ['./snake.component.css']
+    styleUrls: ['./snake.component.scss']
 })
 export class SnakeComponent implements OnInit, Drawer {
 
