@@ -46,17 +46,32 @@ export class SnakeComponent implements OnInit, Drawer {
     }
 
     @HostListener('window:keydown', ['$event'])
-    keyDown(event) {
+    keyDown(event: KeyboardEvent) {
         let velocity: Point
         switch (event.key) {
-            case 'a':
-            case 'ArrowLeft': velocity = Point.Xminus; break
-            case 'd':
-            case 'ArrowRight': velocity = Point.X; break
-            case 'w':
-            case 'ArrowUp': velocity = Point.Yminus; break
-            case 's':
-            case 'ArrowDown': velocity = Point.Y; break
+            case 'w': velocity = Point.Yminus; break
+            case 'a': velocity = Point.Xminus; break
+            case 's': velocity = Point.Y; break
+            case 'd': velocity = Point.X; break
+            default:
+                switch (event.keyCode || event.key) {
+                    case 38:
+                    case 'ArrowUp':
+                    case 'UIKeyInputUpArrow':
+                        velocity = Point.Yminus; break
+                    case 37:
+                    case 'ArrowLeft':
+                    case 'UIKeyInputLeftArrow':
+                        velocity = Point.Xminus; break
+                    case 40:
+                    case 'ArrowDown':
+                    case 'UIKeyInputDownArrow':
+                            velocity = Point.Y; break
+                    case 39:
+                    case 'ArrowRight':
+                    case 'UIKeyInputRightArrow':
+                        velocity = Point.X; break
+                }
         }
         const handled = this.updateVelocity(velocity)
         if (handled) {
