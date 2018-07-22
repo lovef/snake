@@ -5,7 +5,8 @@ node_js:
 script:
 - ng test --browsers ChromeHeadlessNoSandbox --watch=false && ng lint
 
-before_deploy: npm run build
+before_deploy:
+- npm run build
 
 deploy:
   provider: firebase
