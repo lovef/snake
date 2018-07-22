@@ -1,4 +1,5 @@
 import { Component } from '@angular/core'
+import { version } from '../environments/version'
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,5 @@ import { Component } from '@angular/core'
 })
 export class AppComponent {
   title = 'Snake'
+  version = version
 }
