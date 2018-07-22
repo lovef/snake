@@ -1,6 +1,16 @@
 language: node_js
 node_js:
-  - 8.10.0
+- 8.10.0
 
 script:
-  - ng test --browsers ChromeHeadlessNoSandbox --watch=false && ng lint
+- ng test --browsers ChromeHeadlessNoSandbox --watch=false && ng lint
+
+before_deploy: npm run build
+
+deploy:
+  provider: firebase
+  token:
+    secure: LbH2eKwLAoftOUWfN7cRS3l07gCMuhQE6FzXQdBAEtU4kWWyja6YdpAEF3AOb8wSIw09TlBKgMobACh57mtOQtwSXgLJUe9cpSH0nKX8dE1QOcK5D0lmFNSsQZPIxXCssbMaNyoDuyX2si0R5cVUzqq3rS16KDtVgAeoNsjlpy9ijutNtL8wYL55FGXCQYP1oDG0iLpKyNaQ9tfgZcKi/FfN5jr95ynCWy88bBM+LyEAdGzj7e3SYw7B3y/E82ehbDplQtn7WCUPzNpPXlylgN/ey3TaPJLLgpG+YuM6iujkU+iAIBBcd0x5BUS3MkR0ejVu4h42YNugWQdP1/hgs8aC5sEb/mNW3XMLg1x98cj5TEGgCP1O7X40xZn+NDeWRk08MgYySvi1hrTZuO1+2z0jyypCF/ByDF0/NhFBTwQmSnQyfIGTQmyrIJxGOGrpew3ZIH5rOXIX/fa3xPYwm/Wb3EiLy4aRc2im0c8vcLnnWmHKEPpLKwcLV16LriZJ15sv+lRJuohxw8/GUQ9b92dQ+s+fnMUrVYGuc9GIKMihMkcpYI6AHqANnXgoYEHVzzi4cptdAaECJCUXEu08y/jWdNiNdW9gL5zlfLObA4B0cZH3kU0Wi6cBCZd7/WtfjKEfJwoLYPkC2G1vPoezFoIr91ehFy+UOZTzx2pqwqY=
+  message: "Deployed via Travis CI"
+  on:
+    tags: true
