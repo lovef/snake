@@ -4,7 +4,11 @@ import { Apple } from './bord'
 export class Snake {
 
     nutrition = 0
+
     velocity = Point.Zero
+    private velocityIsUpdated = false
+    private nextVelocity: Point = undefined
+
     get nose(): Point { return this.spine[this.spine.length - 1] }
     get tail(): Point { return this.spine[0] }
     spine: Point[]
@@ -15,19 +19,32 @@ export class Snake {
     }
 
     updateVelocity(velocity: Point) {
-        if (velocity.x !== 0 && (this.velocity.y !== 0 || this.velocity.x === 0)) {
-            this.velocity = new Point(velocity.x, 0)
-        } else if (velocity.y !== 0 && (this.velocity.x !== 0 || this.velocity.y === 0)) {
-            this.velocity = new Point(0, velocity.y)
+        const current = this.velocity
+        const next = this.calculateNextVelocity(current, velocity)
+        if (next) {
+            if (!this.velocityIsUpdated) {
+                this.velocity = next
+                this.velocityIsUpdated = true
+            } else {
+                this.nextVelocity = next
+            }
+        }
+    }
+
+    private calculateNextVelocity(current: Point, next: Point) {
+        if (next.x !== 0 && (current.y !== 0 || current.x === 0)) {
+            return new Point(next.x, 0)
+        } else if (next.y !== 0 && (current.x !== 0 || current.y === 0)) {
+            return new Point(0, next.y)
         }
     }
 
     update() {
-        if (this.velocity === Point.Zero) {
-            return
+        this.velocityIsUpdated = false
+        if (this.nextVelocity) {
+            this.velocity = this.nextVelocity
+            this.nextVelocity = null
         }
-        const nextPosition = this.nose.plus(this.velocity)
-        this.moveTo(nextPosition)
     }
 
     moveTo(point: Point) {

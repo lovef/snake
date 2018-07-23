@@ -7,7 +7,7 @@ class BoardTester {
         board.apple = new Apple(Point.Xminus, 0) // Ensure apple is not eaten
     }
 
-    givenVelocity(velocity: Point): BoardTester {
+    updateVelocity(velocity: Point): BoardTester {
         this.snake.updateVelocity(velocity)
         return this
     }
@@ -35,8 +35,8 @@ class BoardTester {
     velocityShouldBe(...expectedVelocities: Point[]) {
         const actualVelocities = []
         expectedVelocities.forEach((x) => {
-            this.board.update()
             actualVelocities.push(this.snake.velocity)
+            this.board.update()
         })
         this.shouldEqual(actualVelocities, expectedVelocities)
         return this
@@ -103,44 +103,73 @@ describe('Board', () => {
         expect(snake.nose).toBe(points[2])
     })
 
-    it('snake will move from one edge to the other', () => {
+    it('will move snake from one edge to the other', () => {
         const snake = board.addSnake()
         new BoardTester(board, snake)
-            .givenVelocity(Point.X)
+            .updateVelocity(Point.X)
             .xShouldBe(3, 4, 0, 1)
-            .givenVelocity(Point.Y)
+            .updateVelocity(Point.Y)
             .yShouldBe(3, 4, 0, 1)
-            .givenVelocity(Point.Xminus)
+            .updateVelocity(Point.Xminus)
             .xShouldBe(0, 4)
-            .givenVelocity(Point.Yminus)
+            .updateVelocity(Point.Yminus)
             .yShouldBe(0, 4)
     })
 
     it('velocity only changes perpendicular to current velocity', () => {
         const snake = board.addSnake()
         new BoardTester(board, snake)
-            .givenVelocity(Point.X)
+            .updateVelocity(Point.X)
             .velocityShouldBe(Point.X, Point.X)
-            .givenVelocity(Point.X)
+            .updateVelocity(Point.X)
             .velocityShouldBe(Point.X, Point.X)
-            .givenVelocity(Point.Xminus)
+            .updateVelocity(Point.Xminus)
             .velocityShouldBe(Point.X, Point.X)
-            .givenVelocity(Point.Y)
+            .updateVelocity(Point.Y)
             .velocityShouldBe(Point.Y, Point.Y)
-            .givenVelocity(Point.Yminus)
+            .updateVelocity(Point.Yminus)
             .velocityShouldBe(Point.Y, Point.Y)
+    })
+
+    it('can handle multiple velocity updates per iteration', () => {
+        const snake = board.addSnake()
+        new BoardTester(board, snake)
+        .updateVelocity(Point.X)
+        .updateVelocity(Point.Xminus)
+        .velocityShouldBe(Point.X, Point.X)
+        .updateVelocity(Point.Y)
+        .updateVelocity(Point.Yminus)
+        .velocityShouldBe(Point.Y, Point.Y)
+        .updateVelocity(Point.X)
+        .updateVelocity(Point.Yminus)
+        .velocityShouldBe(Point.X, Point.Yminus, Point.Yminus)
+        .updateVelocity(Point.Xminus)
+        .updateVelocity(Point.Y)
+        .velocityShouldBe(Point.Xminus, Point.Y, Point.Y)
     })
 
     it('can update velocity with a diagonal vector', () => {
         const snake = board.addSnake()
         new BoardTester(board, snake)
-            .givenVelocity(Point.X)
+            .updateVelocity(Point.X)
             .velocityShouldBe(Point.X)
-            .givenVelocity(Point.X)
-            .givenVelocity(new Point(1, 1))
+            .updateVelocity(new Point(1, 1))
             .velocityShouldBe(Point.Y)
-            .givenVelocity(new Point(1, 1))
+            .updateVelocity(new Point(1, 1))
             .velocityShouldBe(Point.X)
+    })
+
+    it('can update velocity with a diagonal vector multiple times', () => {
+        const snake = board.addSnake()
+        new BoardTester(board, snake)
+            .updateVelocity(Point.X)
+            .velocityShouldBe(Point.X)
+            .updateVelocity(new Point(1, 1))
+            .updateVelocity(new Point(1, 1))
+            .velocityShouldBe(Point.Y, Point.X, Point.X)
+            .updateVelocity(new Point(-1, -1))
+            .updateVelocity(new Point(-1, -1))
+            .velocityShouldBe(Point.Yminus, Point.Xminus, Point.Xminus)
     })
 
     it('can render the entire frame', () => {
