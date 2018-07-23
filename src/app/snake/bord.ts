@@ -79,6 +79,7 @@ export class Board {
             x >= this.width ? 0 : x < 0 ? this.width - 1 : x,
             y >= this.height ? 0 : y < 0 ? this.height - 1 : y)
         snake.moveTo(next)
+        snake.update()
     }
 
     render() {

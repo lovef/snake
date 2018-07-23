@@ -20,15 +20,6 @@ describe('Snake', () => {
         expect(snake.velocity).toBe(Point.Zero)
     })
 
-    it('only moves once it has a velocity', () => {
-        const originalPosition = snake.nose
-        snake.update()
-        expect(snake.nose).toEqual(originalPosition)
-        snake.velocity = Point.X
-        snake.update()
-        expect(snake.nose).toEqual(originalPosition.plus(snake.velocity))
-    })
-
     it('length is default 1', () => {
         expect(snake.length).toBe(1)
         expect(snake.nose).toBe(snake.tail)
@@ -52,11 +43,11 @@ describe('Snake', () => {
         snake.velocity = Point.X
         snake.eat(new Apple(Point.random(), 3))
         for (let i = 1; i <= 3; i++) {
-            snake.update()
+            snake.moveTo(snake.nose.plus(snake.velocity))
             expect(snake.length).toBe(1 + i)
             expect(snake.tail).toBe(originalTailPosition)
         }
-        snake.update()
+        snake.moveTo(snake.nose.plus(snake.velocity))
         expect(snake.length).toBe(4)
         expect(snake.tail).not.toBe(originalTailPosition)
     })
