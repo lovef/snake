@@ -41,8 +41,11 @@ export class Board {
             throw new Error('Game over')
         }
         this.snakes.forEach(snake => {
-            this.drawer.clear(snake.tail)
+            const oldTailPosition = snake.tail
             this.updateSnake(snake)
+            if (snake.tail !== oldTailPosition) {
+                this.drawer.clear(oldTailPosition)
+            }
             if (this.apple && this.apple.position.equals(snake.nose)) {
                 snake.eat(this.apple)
                 this.apple = null
