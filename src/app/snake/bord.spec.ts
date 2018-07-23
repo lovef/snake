@@ -205,6 +205,15 @@ describe('Board', () => {
         expect(cleared).toEqual([oldTailPosition])
     })
 
+    it('do not erase tail when it is still', () => {
+        board.apple = new Apple(Point.Zero, 0)
+        const snake = board.addSnake()
+        snake.updateVelocity(Point.X)
+        snake.eat(new Apple(Point.X, 10))
+        board.update()
+        expect(cleared).toEqual([])
+    })
+
     it('renders apple that is added', () => {
         const snake = board.addSnake()
         do {
