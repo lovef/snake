@@ -55,6 +55,15 @@ button:hover{
     transition: 0.3s;
 }
 
+.signature {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 18px;
+    width: 42px;
+    height: 42px;
+}
+
 @mixin fullscreen {
     background-color: black;
     position: absolute;
